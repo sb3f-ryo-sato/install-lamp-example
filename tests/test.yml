@@ -1,0 +1,5 @@
+---
+- hosts: target
+  become: True
+  roles:
+    - install-lamp-example

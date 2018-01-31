@@ -1,0 +1,32 @@
+---
+# tasks file for install-lamp-example
+- name: Install LAMP packages
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - httpd
+    - mariadb-server
+    - php
+    - php-mysql
+
+- name: Set example php file
+  copy:
+    src: index.php
+    dest: /var/www/html/index.php
+
+- name: Set hostname to httpd.conf
+  replace:
+    path: /etc/httpd/conf/httpd.conf
+    regexp: '^#ServerName.*$'
+    replace: 'ServerName {{ ansible_hostname }}.localdomain:80'
+    backup: yes
+
+- name: Enable and start services
+  systemd:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+    - mariadb
+    - httpd
